@@ -52,21 +52,57 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     final _selectedDay = DateTime.now();
 
     _events = {
-      _selectedDay.subtract(Duration(days: 30)): ['Event A0', 'Event B0', 'Event C0'],
+      _selectedDay.subtract(Duration(days: 30)): [
+        'Event A0',
+        'Event B0',
+        'Event C0'
+      ],
       _selectedDay.subtract(Duration(days: 27)): ['Event A1'],
-      _selectedDay.subtract(Duration(days: 20)): ['Event A2', 'Event B2', 'Event C2', 'Event D2'],
+      _selectedDay.subtract(Duration(days: 20)): [
+        'Event A2',
+        'Event B2',
+        'Event C2',
+        'Event D2'
+      ],
       _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
-      _selectedDay.subtract(Duration(days: 10)): ['Event A4', 'Event B4', 'Event C4'],
-      _selectedDay.subtract(Duration(days: 4)): ['Event A5', 'Event B5', 'Event C5'],
+      _selectedDay.subtract(Duration(days: 10)): [
+        'Event A4',
+        'Event B4',
+        'Event C4'
+      ],
+      _selectedDay.subtract(Duration(days: 4)): [
+        'Event A5',
+        'Event B5',
+        'Event C5'
+      ],
       _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
       _selectedDay: ['Event A7', 'Event B7', 'Event C7', 'Event D7'],
-      _selectedDay.add(Duration(days: 1)): ['Event A8', 'Event B8', 'Event C8', 'Event D8'],
-      _selectedDay.add(Duration(days: 3)): Set.from(['Event A9', 'Event A9', 'Event B9']).toList(),
-      _selectedDay.add(Duration(days: 7)): ['Event A10', 'Event B10', 'Event C10'],
+      _selectedDay.add(Duration(days: 1)): [
+        'Event A8',
+        'Event B8',
+        'Event C8',
+        'Event D8'
+      ],
+      _selectedDay.add(Duration(days: 3)):
+          Set.from(['Event A9', 'Event A9', 'Event B9']).toList(),
+      _selectedDay.add(Duration(days: 7)): [
+        'Event A10',
+        'Event B10',
+        'Event C10'
+      ],
       _selectedDay.add(Duration(days: 11)): ['Event A11', 'Event B11'],
-      _selectedDay.add(Duration(days: 17)): ['Event A12', 'Event B12', 'Event C12', 'Event D12'],
+      _selectedDay.add(Duration(days: 17)): [
+        'Event A12',
+        'Event B12',
+        'Event C12',
+        'Event D12'
+      ],
       _selectedDay.add(Duration(days: 22)): ['Event A13', 'Event B13'],
-      _selectedDay.add(Duration(days: 26)): ['Event A14', 'Event B14', 'Event C14'],
+      _selectedDay.add(Duration(days: 26)): [
+        'Event A14',
+        'Event B14',
+        'Event C14'
+      ],
     };
 
     _selectedEvents = _events[_selectedDay] ?? [];
@@ -94,11 +130,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  void _onVisibleDaysChanged(DateTime first, DateTime last, CalendarFormat format) {
+  void _onVisibleDaysChanged(
+      DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onVisibleDaysChanged');
   }
 
-  void _onCalendarCreated(DateTime first, DateTime last, CalendarFormat format) {
+  void _onCalendarCreated(
+      DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onCalendarCreated');
   }
 
@@ -131,6 +169,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       events: _events,
       holidays: _holidays,
       startingDayOfWeek: StartingDayOfWeek.monday,
+      startDay: DateTime(2020, 01, 01),
+      endDay: DateTime(2021, 12, 01),
       calendarStyle: CalendarStyle(
         selectedColor: Colors.deepOrange[400],
         todayColor: Colors.deepOrange[200],
@@ -138,7 +178,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
-        formatButtonTextStyle: TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+        formatButtonTextStyle:
+            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
         formatButtonDecoration: BoxDecoration(
           color: Colors.deepOrange[400],
           borderRadius: BorderRadius.circular(16.0),
@@ -152,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
+    print("Asdfafs");
     return TableCalendar(
       locale: 'pl_PL',
       calendarController: _calendarController,
@@ -249,7 +291,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         shape: BoxShape.rectangle,
         color: _calendarController.isSelected(date)
             ? Colors.brown[500]
-            : _calendarController.isToday(date) ? Colors.brown[300] : Colors.blue[400],
+            : _calendarController.isToday(date)
+                ? Colors.brown[300]
+                : Colors.blue[400],
       ),
       width: 16.0,
       height: 16.0,
@@ -294,7 +338,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: Text('2 weeks'),
               onPressed: () {
                 setState(() {
-                  _calendarController.setCalendarFormat(CalendarFormat.twoWeeks);
+                  _calendarController
+                      .setCalendarFormat(CalendarFormat.twoWeeks);
                 });
               },
             ),
@@ -310,7 +355,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
         const SizedBox(height: 8.0),
         RaisedButton(
-          child: Text('Set day ${dateTime.day}-${dateTime.month}-${dateTime.year}'),
+          child: Text(
+              'Set day ${dateTime.day}-${dateTime.month}-${dateTime.year}'),
           onPressed: () {
             _calendarController.setSelectedDay(
               DateTime(dateTime.year, dateTime.month, dateTime.day),
@@ -330,7 +376,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   border: Border.all(width: 0.8),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: ListTile(
                   title: Text(event.toString()),
                   onTap: () => print('$event tapped!'),

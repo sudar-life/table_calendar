@@ -35,9 +35,10 @@ class CalendarController {
   CalendarFormat get calendarFormat => _calendarFormat.value;
 
   /// List of currently visible days.
-  List<DateTime> get visibleDays => calendarFormat == CalendarFormat.month && !_includeInvisibleDays
-      ? _visibleDays.value.where((day) => !_isExtraDay(day)).toList()
-      : _visibleDays.value;
+  List<DateTime> get visibleDays =>
+      calendarFormat == CalendarFormat.month && !_includeInvisibleDays
+          ? _visibleDays.value.where((day) => !_isExtraDay(day)).toList()
+          : _visibleDays.value;
 
   /// `Map` of currently visible events.
   Map<DateTime, List> get visibleEvents {
@@ -81,6 +82,8 @@ class CalendarController {
   Map<DateTime, List> _holidays;
   DateTime _focusedDay;
   DateTime _selectedDay;
+  DateTime _startDay;
+  DateTime _endDay;
   StartingDayOfWeek _startingDayOfWeek;
   ValueNotifier<CalendarFormat> _calendarFormat;
   ValueNotifier<List<DateTime>> _visibleDays;
@@ -105,6 +108,8 @@ class CalendarController {
     @required OnVisibleDaysChanged onVisibleDaysChanged,
     @required OnCalendarCreated onCalendarCreated,
     @required bool includeInvisibleDays,
+    DateTime startDay,
+    DateTime endDay,
   }) {
     _events = events;
     _holidays = holidays;
@@ -113,6 +118,9 @@ class CalendarController {
     _useNextCalendarFormat = useNextCalendarFormat;
     _selectedDayCallback = selectedDayCallback;
     _includeInvisibleDays = includeInvisibleDays;
+
+    _startDay = startDay;
+    _endDay = endDay;
 
     _pageId = 0;
     _dx = 0;
@@ -240,8 +248,9 @@ class CalendarController {
     return formats[id];
   }
 
-  String _getFormatButtonText() =>
-      _useNextCalendarFormat ? _availableCalendarFormats[_nextFormat()] : _availableCalendarFormats[_calendarFormat.value];
+  String _getFormatButtonText() => _useNextCalendarFormat
+      ? _availableCalendarFormats[_nextFormat()]
+      : _availableCalendarFormats[_calendarFormat.value];
 
   void _selectPrevious() {
     if (calendarFormat == CalendarFormat.month) {
@@ -270,11 +279,18 @@ class CalendarController {
   }
 
   void _selectPreviousMonth() {
-    _focusedDay = _previousMonth(_focusedDay);
+    if (_startDay == null) _focusedDay = _previousMonth(_focusedDay);
+
+    if (_startDay != null &&
+        _startDay.isBefore(_focusedDay.subtract(Duration(days: 1))))
+      _focusedDay = _previousMonth(_focusedDay);
   }
 
   void _selectNextMonth() {
-    _focusedDay = _nextMonth(_focusedDay);
+    if (_endDay == null) _focusedDay = _nextMonth(_focusedDay);
+
+    if (_endDay != null && _endDay.isAfter(_focusedDay.add(Duration(days: 32))))
+      _focusedDay = _nextMonth(_focusedDay);
   }
 
   void _selectPreviousTwoWeeks() {
@@ -283,7 +299,8 @@ class CalendarController {
       _focusedDay = _previousWeek(_focusedDay);
     } else {
       // in bottom row OR not visible
-      _focusedDay = _previousWeek(_focusedDay.subtract(const Duration(days: 7)));
+      _focusedDay =
+          _previousWeek(_focusedDay.subtract(const Duration(days: 7)));
     }
   }
 
@@ -394,7 +411,9 @@ class CalendarController {
   }
 
   DateTime _lastDayOfMonth(DateTime month) {
-    final date = month.month < 12 ? DateTime.utc(month.year, month.month + 1, 1, 12) : DateTime.utc(month.year + 1, 1, 1, 12);
+    final date = month.month < 12
+        ? DateTime.utc(month.year, month.month + 1, 1, 12)
+        : DateTime.utc(month.year + 1, 1, 1, 12);
     return date.subtract(const Duration(days: 1));
   }
 
@@ -436,11 +455,13 @@ class CalendarController {
   }
 
   DateTime _getEventKey(DateTime day) {
-    return visibleEvents.keys.firstWhere((it) => _isSameDay(it, day), orElse: () => null);
+    return visibleEvents.keys
+        .firstWhere((it) => _isSameDay(it, day), orElse: () => null);
   }
 
   DateTime _getHolidayKey(DateTime day) {
-    return visibleHolidays.keys.firstWhere((it) => _isSameDay(it, day), orElse: () => null);
+    return visibleHolidays.keys
+        .firstWhere((it) => _isSameDay(it, day), orElse: () => null);
   }
 
   /// Returns true if `day` is currently selected.
@@ -454,7 +475,9 @@ class CalendarController {
   }
 
   bool _isSameDay(DateTime dayA, DateTime dayB) {
-    return dayA.year == dayB.year && dayA.month == dayB.month && dayA.day == dayB.day;
+    return dayA.year == dayB.year &&
+        dayA.month == dayB.month &&
+        dayA.day == dayB.day;
   }
 
   bool _isWeekend(DateTime day, List<int> weekendDays) {
