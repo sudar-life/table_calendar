@@ -146,14 +146,46 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          // Switch out 2 lines below to play with TableCalendar's settings
-          //-----------------------
           _buildTableCalendar(),
-          // _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 8.0),
-          _buildButtons(),
-          const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList()),
+        ],
+      ),
+    );
+  }
+
+  Widget _dowHeaderStyle({required String date, required Color color}) {
+    return Center(
+        child: Container(
+            height: 30, child: Text(date, style: TextStyle(color: color))));
+  }
+
+  Widget _dayStyle(
+      {required int day,
+      required String subDay,
+      Color? color,
+      bool isToday = false,
+      bool isSelected = false}) {
+    var backgroundColor = const Color(0xfff7fbfd);
+    if (isToday) backgroundColor = const Color(0xff5475fc);
+    if (isSelected) backgroundColor = const Color(0xffd5ebff);
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        shape: BoxShape.circle,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            '$day',
+            style:
+                TextStyle(color: isToday ? Colors.white : color, fontSize: 18),
+          ),
+          Text(
+            subDay,
+            style: TextStyle(
+                fontSize: 10,
+                color: isToday ? Colors.white : const Color(0xffa7a7a7)),
+          ),
         ],
       ),
     );
@@ -162,25 +194,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   // Simple TableCalendar configuration (using Styles)
   Widget _buildTableCalendar() {
     return TableCalendar(
+      headerVisible: false,
       calendarController: _calendarController!,
-      events: _events!,
-      holidays: _holidays,
-      startingDayOfWeek: StartingDayOfWeek.monday,
+      startingDayOfWeek: StartingDayOfWeek.sunday,
+      availableGestures: AvailableGestures.horizontalSwipe,
       startDay: DateTime(2020, 01, 01),
       endDay: DateTime(2021, 12, 01),
-      calendarStyle: CalendarStyle(
-        selectedColor: Colors.deepOrange[400]!,
-        todayColor: Colors.deepOrange[200]!,
-        markersColor: Colors.brown[700]!,
-        outsideDaysVisible: false,
+      calendarStyle: const CalendarStyle(
+        selectedColor: Color(0xffd5ebff),
+        todayColor: Color(0xff5475fc),
+        outsideDaysVisible: true,
       ),
-      headerStyle: HeaderStyle(
-        formatButtonTextStyle:
-            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
-          borderRadius: BorderRadius.circular(16.0),
-        ),
+      builders: CalendarBuilders(
+        dowWeekdayBuilder: (context, name) =>
+            _dowHeaderStyle(date: name, color: Colors.black),
+        dowWeekendBuilder: (context, name) => _dowHeaderStyle(
+            date: name, color: name == '토' ? Colors.blue : Colors.red),
+        outsideDayBuilder: (context, date, _) => _dayStyle(
+            day: date.day, subDay: 's', color: Colors.black.withOpacity(0.3)),
+        outsideWeekendDayBuilder: (context, date, _) => _dayStyle(
+            day: date.day,
+            subDay: 's',
+            color: date.weekday == DateTime.sunday
+                ? Colors.red[300]!.withOpacity(0.3)
+                : Colors.blue[300]!.withOpacity(0.3)),
+        weekendDayBuilder: (context, date, _) => _dayStyle(
+            day: date.day,
+            subDay: 's',
+            color: date.weekday == DateTime.sunday
+                ? Colors.red[300]!
+                : Colors.blue[300]!),
+        selectedDayBuilder: (context, date, _) =>
+            _dayStyle(day: date.day, subDay: 's', isSelected: true),
+        todayDayBuilder: (context, date, _) =>
+            _dayStyle(day: date.day, subDay: 's', isToday: true),
+        dayBuilder: (context, date, events) =>
+            _dayStyle(day: date.day, subDay: 's'),
       ),
       onDaySelected: _onDaySelected,
       onVisibleDaysChanged: _onVisibleDaysChanged,
@@ -189,129 +238,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   // More advanced TableCalendar configuration (using Builders & Styles)
-  Widget _buildTableCalendarWithBuilders() {
-    return TableCalendar(
-      locale: 'pl_PL',
-      calendarController: _calendarController!,
-      events: _events!,
-      holidays: _holidays,
-      initialCalendarFormat: CalendarFormat.month,
-      formatAnimation: FormatAnimation.slide,
-      startingDayOfWeek: StartingDayOfWeek.sunday,
-      availableGestures: AvailableGestures.all,
-      availableCalendarFormats: const {
-        CalendarFormat.month: '',
-        CalendarFormat.week: '',
-      },
-      calendarStyle: CalendarStyle(
-        outsideDaysVisible: false,
-        weekendStyle: TextStyle().copyWith(color: Colors.blue[800]),
-        holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
-      ),
-      daysOfWeekStyle: DaysOfWeekStyle(
-        weekendStyle: TextStyle().copyWith(color: Colors.blue[600]),
-      ),
-      headerStyle: HeaderStyle(
-        centerHeaderTitle: true,
-        formatButtonVisible: false,
-      ),
-      builders: CalendarBuilders(
-        selectedDayBuilder: (context, date, _) {
-          return FadeTransition(
-            opacity: Tween(begin: 0.0, end: 1.0).animate(_animationController!),
-            child: Container(
-              margin: const EdgeInsets.all(4.0),
-              padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-              color: Colors.deepOrange[300],
-              width: 100,
-              height: 100,
-              child: Text(
-                '${date.day}',
-                style: TextStyle().copyWith(fontSize: 16.0),
-              ),
-            ),
-          );
-        },
-        todayDayBuilder: (context, date, _) {
-          return Container(
-            margin: const EdgeInsets.all(4.0),
-            padding: const EdgeInsets.only(top: 5.0, left: 6.0),
-            color: Colors.amber[400],
-            width: 100,
-            height: 100,
-            child: Text(
-              '${date.day}',
-              style: TextStyle().copyWith(fontSize: 16.0),
-            ),
-          );
-        },
-        markersBuilder: (context, date, events, holidays) {
-          final children = <Widget>[];
-
-          if (events!.isNotEmpty) {
-            children.add(
-              Positioned(
-                right: 1,
-                bottom: 1,
-                child: _buildEventsMarker(date, events),
-              ),
-            );
-          }
-
-          if (holidays!.isNotEmpty) {
-            children.add(
-              Positioned(
-                right: -2,
-                top: -2,
-                child: _buildHolidaysMarker(),
-              ),
-            );
-          }
-
-          return children;
-        },
-      ),
-      onDaySelected: (date, events, holidays) {
-        _onDaySelected(date, events, holidays);
-        _animationController!.forward(from: 0.0);
-      },
-      onVisibleDaysChanged: _onVisibleDaysChanged,
-      onCalendarCreated: _onCalendarCreated,
-    );
-  }
-
-  Widget _buildEventsMarker(DateTime date, List events) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: _calendarController!.isSelected(date)
-            ? Colors.brown[500]
-            : _calendarController!.isToday(date)
-                ? Colors.brown[300]
-                : Colors.blue[400],
-      ),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHolidaysMarker() {
-    return Icon(
-      Icons.add_box,
-      size: 20.0,
-      color: Colors.blueGrey[800],
-    );
-  }
 
   Widget _buildButtons() {
     final dateTime = _events!.keys.elementAt(_events!.length - 2);

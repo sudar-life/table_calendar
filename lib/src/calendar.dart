@@ -740,34 +740,34 @@ class _TableCalendarState extends State<TableCalendar>
 
     if (isUnavailable) {
       return widget.builders.unavailableDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isSelected && widget.calendarStyle.renderSelectedFirst) {
       return widget.builders.selectedDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isToday) {
       return widget.builders.todayDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isSelected) {
       return widget.builders.selectedDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isOutsideHoliday) {
       return widget.builders.outsideHolidayDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isHoliday) {
       return widget.builders.holidayDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isOutsideWeekend) {
       return widget.builders.outsideWeekendDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isOutside) {
       return widget.builders.outsideDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (isWeekend) {
       return widget.builders.weekendDayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else if (widget.builders.dayBuilder != null) {
       return widget.builders.dayBuilder!(
-          context, date, widget.calendarController.visibleEvents[eventKey!]);
+          context, date, widget.calendarController.visibleEvents[eventKey]);
     } else {
       return _CellWidget(
         text: '${date.day}',
