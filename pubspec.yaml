@@ -12,8 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  intl: ^0.17.0
-  simple_gesture_detector: ^0.2.0
+  intl: 0.16.1
+  simple_gesture_detector: 0.1.6
 
 dev_dependencies:
   flutter_test:
